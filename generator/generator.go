@@ -9,7 +9,7 @@ import (
 func main() {
 	sw := stopwatch.New()
 
-	b := NewPuzzle()
+	b := puzzle.NewPuzzle()
 	b.Place(5, 5)
 	b.Place(7, 4)
 	b.Place(3, 4)

@@ -3,18 +3,17 @@ package puzzle
 import (
 	"errors"
 	"fmt"
-	"github.com/odysseus/sudoku/cell"
 )
 
 /// Puzzle Struct ///
 type Puzzle struct {
-	board []cell.Cell
+	board []Cell
 }
 
 func NewPuzzle() *Puzzle {
-	p := Puzzle{board: make([]cell.Cell, 81)}
+	p := Puzzle{board: make([]Cell, 81)}
 	for i, _ := range p.board {
-		p.board[i] = cell.NewCell()
+		p.board[i] = NewCell()
 	}
 	return &p
 }
