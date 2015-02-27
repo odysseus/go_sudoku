@@ -37,18 +37,14 @@ func (c *Cell) Value() int {
 }
 
 func (c *Cell) CandidateCount() int {
-	if c.filled {
-		return 0
-	} else {
-		return c.candcount
-	}
+	return c.candcount
 }
 
 func (c *Cell) Filled() bool {
 	return c.filled
 }
 
-func (c *Cell) Candidates() []bool {
+func (c *Cell) BoolCandidates() []bool {
 	// Returns a copy of the current candidates array
 	r := make([]bool, 9)
 	_ = copy(r, c.candidates)
@@ -64,7 +60,7 @@ func (c *Cell) Set(n int) {
 func (c *Cell) RemoveCandidate(n int) {
 	// Removes a candidate from the array and decrements the count
 	// of valid candidates
-	if !c.filled {
+	if c.candidates[n] {
 		c.candidates[n] = false
 		c.candcount--
 	}
@@ -79,7 +75,7 @@ func (c *Cell) TestRemoval(n int) int {
 	}
 }
 
-func (c *Cell) IntCandidates() []int {
+func (c *Cell) Candidates() []int {
 	fin := make([]int, 0, 8)
 	for i := 1; i < len(c.candidates); i++ {
 		if c.candidates[i] {

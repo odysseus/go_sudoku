@@ -43,7 +43,7 @@ func (p *Puzzle) ValidPlacement(ind, val int) bool {
 	if cell.Filled() {
 		return false
 	} else {
-		return cell.Candidates()[val]
+		return cell.BoolCandidates()[val]
 	}
 }
 
@@ -53,14 +53,14 @@ func (p *Puzzle) Place(ind, val int) error {
 
 	// Remove the candidate from all visible cells
 	checkIndices := CheckIndices(ind)
-	for i, _ := range checkIndices {
-		p.Board[i].RemoveCandidate(val)
+	for _, v := range checkIndices {
+		p.Board[v].RemoveCandidate(val)
 	}
 	return nil
 }
 
 func (p *Puzzle) CandidatesForIndex(ind int) []bool {
-	return p.Board[ind].Candidates()
+	return p.Board[ind].BoolCandidates()
 }
 
 /// Debug Helpers ///
