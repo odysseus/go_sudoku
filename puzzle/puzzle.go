@@ -1,26 +1,25 @@
 package puzzle
 
 import (
-	"errors"
 	"fmt"
 )
 
 /// Puzzle Struct ///
 type Puzzle struct {
-	board []Cell
+	Board []Cell
 }
 
 func NewPuzzle() *Puzzle {
-	p := Puzzle{board: make([]Cell, 81)}
-	for i, _ := range p.board {
-		p.board[i] = NewCell()
+	p := Puzzle{Board: make([]Cell, 81)}
+	for i, _ := range p.Board {
+		p.Board[i] = NewCell()
 	}
 	return &p
 }
 
 func (p *Puzzle) String() string {
 	s := ""
-	for i, v := range p.board {
+	for i, v := range p.Board {
 		row := rowForIndex(i)
 		col := columnForIndex(i)
 		if i%9 == 0 {
@@ -38,9 +37,9 @@ func (p *Puzzle) String() string {
 	return s
 }
 
-func (p *Puzzle) validPlacement(ind, val int) bool {
+func (p *Puzzle) ValidPlacement(ind, val int) bool {
 	// Ensures that the cell is not filled and tha val is a valid candidate
-	cell := &p.board[ind]
+	cell := &p.Board[ind]
 	if cell.Filled() {
 		return false
 	} else {
@@ -49,32 +48,32 @@ func (p *Puzzle) validPlacement(ind, val int) bool {
 }
 
 func (p *Puzzle) Place(ind, val int) error {
-	// Places the
-	if p.validPlacement(ind, val) {
-		p.board[ind].Set(val)
+	// Set the value
+	p.Board[ind].Set(val)
 
-		checkIndices := checkIndicesForIndex(ind)
-		for i, _ := range checkIndices {
-			p.board[i].RemoveCandidate(val)
-		}
-		return nil
-	} else {
-		return errors.New(
-			fmt.Sprintf("%d is not a valid placement for %d", val, ind))
+	// Remove the candidate from all visible cells
+	checkIndices := CheckIndices(ind)
+	for i, _ := range checkIndices {
+		p.Board[i].RemoveCandidate(val)
 	}
+	return nil
+}
+
+func (p *Puzzle) CandidatesForIndex(ind int) []bool {
+	return p.Board[ind].Candidates()
 }
 
 /// Debug Helpers ///
 
 func (p *Puzzle) reset() {
-	for i, _ := range p.board {
-		p.board[i].Set(0)
+	for i, _ := range p.Board {
+		p.Board[i].Set(0)
 	}
 }
 
 func (p *Puzzle) showIndices() {
-	for i, _ := range p.board {
-		p.board[i].Set(i)
+	for i, _ := range p.Board {
+		p.Board[i].Set(i)
 	}
 }
 
@@ -129,7 +128,7 @@ func indicesForHouse(house int) []int {
 	return indices
 }
 
-func checkIndicesForIndex(ind int) []int {
+func CheckIndices(ind int) []int {
 	checkIndices := indicesForRow(rowForIndex(ind))
 	checkIndices = append(checkIndices, indicesForColumn(columnForIndex(ind))...)
 	checkIndices = append(checkIndices, indicesForHouse(houseForIndex(ind))...)
