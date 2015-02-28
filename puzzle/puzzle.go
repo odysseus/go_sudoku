@@ -6,14 +6,11 @@ import (
 
 /// Puzzle Struct ///
 type Puzzle struct {
-	Board []Cell
+	Board []int
 }
 
 func NewPuzzle() *Puzzle {
-	p := Puzzle{Board: make([]Cell, 81)}
-	for i, _ := range p.Board {
-		p.Board[i] = NewCell()
-	}
+	p := Puzzle{Board: make([]int, 81)}
 	return &p
 }
 
@@ -31,50 +28,25 @@ func (p *Puzzle) String() string {
 		if col != 0 && col%3 == 0 {
 			s += "| "
 		}
-		s += fmt.Sprintf("%v ", v.String())
+		s += fmt.Sprintf("%v ", v)
 	}
 	s += "\n"
 	return s
 }
 
-func (p *Puzzle) ValidPlacement(ind, val int) bool {
-	// Ensures that the cell is not filled and tha val is a valid candidate
-	cell := &p.Board[ind]
-	if cell.Filled() {
-		return false
-	} else {
-		return cell.BoolCandidates()[val]
+func (p *Puzzle) CandidatesForIndex(ind int) []int {
+	bools := make([]bool, 10)
+	ci := CheckIndices(ind)
+	for _, v := range ci {
+		bools[p.Board[v]] = true
 	}
-}
-
-func (p *Puzzle) Place(ind, val int) error {
-	// Set the value
-	p.Board[ind].Set(val)
-
-	// Remove the candidate from all visible cells
-	checkIndices := CheckIndices(ind)
-	for _, v := range checkIndices {
-		p.Board[v].RemoveCandidate(val)
+	cands := make([]int, 0, 9)
+	for i := 1; i < len(bools); i++ {
+		if !bools[i] {
+			cands = append(cands, i)
+		}
 	}
-	return nil
-}
-
-func (p *Puzzle) CandidatesForIndex(ind int) []bool {
-	return p.Board[ind].BoolCandidates()
-}
-
-/// Debug Helpers ///
-
-func (p *Puzzle) reset() {
-	for i, _ := range p.Board {
-		p.Board[i].Set(0)
-	}
-}
-
-func (p *Puzzle) showIndices() {
-	for i, _ := range p.Board {
-		p.Board[i].Set(i)
-	}
+	return cands
 }
 
 /// Index finding methods ///
@@ -124,7 +96,6 @@ func indicesForHouse(house int) []int {
 			indices = append(indices, (current + j))
 		}
 	}
-
 	return indices
 }
 
@@ -134,4 +105,18 @@ func CheckIndices(ind int) []int {
 	checkIndices = append(checkIndices, indicesForHouse(houseForIndex(ind))...)
 
 	return checkIndices
+}
+
+/// Debug Helpers ///
+
+func (p *Puzzle) reset() {
+	for i, _ := range p.Board {
+		p.Board[i] = 0
+	}
+}
+
+func (p *Puzzle) showIndices() {
+	for i, _ := range p.Board {
+		p.Board[i] = i
+	}
 }
